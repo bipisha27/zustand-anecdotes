@@ -1,29 +1,45 @@
-import { useAnecdotes, useAnecdoteActions } from "./store";
+import { useAnecdotes, useAnecdoteActions, useFilter } from "./store";
 
 const AnecdoteList = () => {
-  const anecdotes = useAnecdotes()
-  const {voteAnecdote} = useAnecdoteActions()
+  const anecdotes = useAnecdotes();
+  const { voteAnecdote, deleteAnecdote } = useAnecdoteActions();
+  const filter = useFilter();
 
-  const sortedAnecdotes = anecdotes.toSorted(
-    (a,b) => b.votes - a.votes
-  )
+  const filteredAnecdotes = anecdotes.filter((a) =>
+    a.content.toLowerCase().includes(filter.toLowerCase())
+  );
 
-  return(
-    <div>
-      {sortedAnecdotes.map((anecdote) => (
-        <div key = {anecdote.id}>
-          <div>{anecdote.content}</div>
+  const sortedAnecdotes = filteredAnecdotes.toSorted(
+    (a, b) => b.votes - a.votes
+  );
 
-          <div> has {anecdote.votes}
+  return (
+    <div style={{ padding: 10 }}>
+      {sortedAnecdotes.map((a) => (
+        <div
+          key={a.id}
+          style={{
+            marginBottom: 10,
+            padding: 10,
+            border: "1px solid #ccc",
+          }}
+        >
+          <div>{a.content}</div>
 
-          <button onClick={() => voteAnecdote(anecdote.id)}>
-            vote
-          </button>
+          <div>
+            has {a.votes} votes
+            <button onClick={() => voteAnecdote(a.id)}>vote</button>
+
+            {a.votes === 0 && (
+              <button onClick={() => deleteAnecdote(a.id)}>
+                delete
+              </button> //if left side ie a.votes===0 is true, return right side else dont return it - conditional rendering with short circuit evaluation
+            )}
           </div>
-          </div>
+        </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default AnecdoteList
+export default AnecdoteList;

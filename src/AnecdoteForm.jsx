@@ -5,15 +5,17 @@ const AnecdoteForm = () => {
   const [newAnecdote, setNewAnecdote] = useState('')
   const {addAnecdote} = useAnecdoteActions()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    addAnecdote(newAnecdote)
-    setNewAnecdote('')
+    const anecdote = e.target.anecdote.value 
+    await addAnecdote(anecdote)
+    e.target.reset()
   }
 
   return(
     <form onSubmit={handleSubmit}>
       <input
+        name = "anecdote"
         value = {newAnecdote}
         onChange = {(e) => setNewAnecdote(e.target.value)}
       />
